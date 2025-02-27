@@ -121,36 +121,18 @@ Formats imagePullSecrets. Input is (dict "Values" .Values "imagePullSecrets" .{s
 The image to use for kube-state-metrics
 */}}
 {{- define "kube-state-metrics.image" -}}
-{{- if .Values.image.sha }}
-{{- if .Values.global.imageRegistry }}
-{{- printf "%s/%s:%s@%s" .Values.global.imageRegistry .Values.image.repository (default (printf "v%s" .Chart.AppVersion) .Values.image.tag) .Values.image.sha }}
-{{- else }}
-{{- printf "%s/%s:%s@%s" .Values.image.registry .Values.image.repository (default (printf "v%s" .Chart.AppVersion) .Values.image.tag) .Values.image.sha }}
-{{- end }}
-{{- else }}
-{{- if .Values.global.imageRegistry }}
-{{- printf "%s/%s:%s" .Values.global.imageRegistry .Values.image.repository (default (printf "v%s" .Chart.AppVersion) .Values.image.tag) }}
-{{- else }}
-{{- printf "%s/%s:%s" .Values.image.registry .Values.image.repository (default (printf "v%s" .Chart.AppVersion) .Values.image.tag) }}
-{{- end }}
-{{- end }}
+{{- $baseRegistry := ternary "" (printf "%s/" (.Values.global).baseImageRegistry) (empty (.Values.global).baseImageRegistry) }}
+{{- $registry := printf "%s%s" $baseRegistry ((.Values.global).imageRegistry | default (.Values.image).registry) }}
+{{- $digest := ternary "" (printf "@%s" (.Values.image).sha) (empty (.Values.image).sha) }}
+{{- printf "%s/%s:%s%s" $registry .Values.image.repository (default (printf "v%s" .Chart.AppVersion) .Values.image.tag) $digest }}
 {{- end }}
 
 {{/*
 The image to use for kubeRBACProxy
 */}}
 {{- define "kubeRBACProxy.image" -}}
-{{- if .Values.kubeRBACProxy.image.sha }}
-{{- if .Values.global.imageRegistry }}
-{{- printf "%s/%s:%s@%s" .Values.global.imageRegistry .Values.kubeRBACProxy.image.repository (default (printf "v%s" .Chart.AppVersion) .Values.kubeRBACProxy.image.tag) .Values.kubeRBACProxy.image.sha }}
-{{- else }}
-{{- printf "%s/%s:%s@%s" .Values.kubeRBACProxy.image.registry .Values.kubeRBACProxy.image.repository (default (printf "v%s" .Chart.AppVersion) .Values.kubeRBACProxy.image.tag) .Values.kubeRBACProxy.image.sha }}
-{{- end }}
-{{- else }}
-{{- if .Values.global.imageRegistry }}
-{{- printf "%s/%s:%s" .Values.global.imageRegistry .Values.kubeRBACProxy.image.repository (default (printf "v%s" .Chart.AppVersion) .Values.kubeRBACProxy.image.tag) }}
-{{- else }}
-{{- printf "%s/%s:%s" .Values.kubeRBACProxy.image.registry .Values.kubeRBACProxy.image.repository (default (printf "v%s" .Chart.AppVersion) .Values.kubeRBACProxy.image.tag) }}
-{{- end }}
-{{- end }}
+{{- $baseRegistry := ternary "" (printf "%s/" (.Values.global).baseImageRegistry) (empty (.Values.global).baseImageRegistry) }}
+{{- $registry := printf "%s%s" $baseRegistry ((.Values.global).imageRegistry | default (.Values.kubeRBACProxy.image).registry) }}
+{{- $digest := ternary "" (printf "@%s" (.Values.kubeRBACProxy.image).sha) (empty (.Values.kubeRBACProxy.image).sha) }}
+{{- printf "%s/%s:%s%s" $registry .Values.kubeRBACProxy.image.repository (default (printf "v%s" .Chart.AppVersion) .Values.kubeRBACProxy.image.tag) $digest }}
 {{- end }}

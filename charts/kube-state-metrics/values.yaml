@@ -27,6 +27,9 @@ global:
   #
   # Allow parent charts to override registry hostname
   imageRegistry: ""
+  #
+  # Image registry to prepend to the declared registry (for pull-through cache scenario)
+  baseImageRegistry: ""
 
 # If set to true, this will deploy kube-state-metrics as a StatefulSet and the data
 # will be automatically sharded across <.Values.replicas> pods using the built-in
@@ -102,7 +105,7 @@ rbac:
 # Configure kube-rbac-proxy. When enabled, creates one kube-rbac-proxy container per exposed HTTP endpoint (metrics and telemetry if enabled).
 # The requests are served through the same service but requests are then HTTPS.
 kubeRBACProxy:
-  enabled: false
+  enabled: true
   image:
     registry: quay.io
     repository: brancz/kube-rbac-proxy

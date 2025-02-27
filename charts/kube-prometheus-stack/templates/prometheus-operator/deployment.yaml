@@ -47,9 +47,9 @@ spec:
     {{- end }}
       containers:
         - name: {{ template "kube-prometheus-stack.name" . }}
-          {{- $configReloaderRegistry := .Values.global.imageRegistry | default .Values.prometheusOperator.prometheusConfigReloader.image.registry -}}
-          {{- $operatorRegistry := .Values.global.imageRegistry | default .Values.prometheusOperator.image.registry -}}
-          {{- $thanosRegistry := .Values.global.imageRegistry | default .Values.prometheusOperator.thanosImage.registry -}}
+          {{- $configReloaderRegistry := include "kube-prometheus-stack.imageRegistry" ( dict "registry" .Values.prometheusOperator.prometheusConfigReloader.image.registry "global" .Values.global ) -}}
+          {{- $operatorRegistry := include "kube-prometheus-stack.imageRegistry" ( dict "registry" .Values.prometheusOperator.image.registry "global" .Values.global ) -}}
+          {{- $thanosRegistry := include "kube-prometheus-stack.imageRegistry" ( dict "registry" .Values.prometheusOperator.thanosImage.registry "global" .Values.global ) -}}
           {{- if .Values.prometheusOperator.image.sha }}
           image: "{{ $operatorRegistry }}/{{ .Values.prometheusOperator.image.repository }}:{{ .Values.prometheusOperator.image.tag | default .Chart.AppVersion }}@sha256:{{ .Values.prometheusOperator.image.sha }}"
           {{- else }}

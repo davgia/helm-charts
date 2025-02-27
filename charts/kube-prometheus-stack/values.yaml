@@ -347,6 +347,10 @@ global:
   ##
   imageRegistry: ""
 
+  ## Global base image registry to use if it needs to be overriden for some specific use cases (e.g proxy cache registries, ...)
+  ##
+  baseImageRegistry: ""
+
   ## Reference to one or more secrets to be used when pulling images
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
   ##

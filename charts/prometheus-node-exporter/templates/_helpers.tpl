@@ -77,19 +77,11 @@ The image to use
 {{- define "prometheus-node-exporter.image" -}}
 {{- if .Values.image.sha }}
 {{- fail "image.sha forbidden. Use image.digest instead" }}
-{{- else if .Values.image.digest }}
-{{- if .Values.global.imageRegistry }}
-{{- printf "%s/%s:%s@%s" .Values.global.imageRegistry .Values.image.repository (default (printf "v%s" .Chart.AppVersion) .Values.image.tag) .Values.image.digest }}
-{{- else }}
-{{- printf "%s/%s:%s@%s" .Values.image.registry .Values.image.repository (default (printf "v%s" .Chart.AppVersion) .Values.image.tag) .Values.image.digest }}
 {{- end }}
-{{- else }}
-{{- if .Values.global.imageRegistry }}
-{{- printf "%s/%s:%s" .Values.global.imageRegistry .Values.image.repository (default (printf "v%s" .Chart.AppVersion) .Values.image.tag) }}
-{{- else }}
-{{- printf "%s/%s:%s" .Values.image.registry .Values.image.repository (default (printf "v%s" .Chart.AppVersion) .Values.image.tag) }}
-{{- end }}
-{{- end }}
+{{- $baseRegistry := ternary "" (printf "%s/" (.Values.global).baseImageRegistry) (empty (.Values.global).baseImageRegistry) }}
+{{- $registry := printf "%s%s" $baseRegistry ((.Values.global).imageRegistry | default (.Values.image).registry) }}
+{{- $digest := ternary "" (printf "@%s" (.Values.image).digest) (empty (.Values.image).digest) }}
+{{- printf "%s/%s:%s%s" $registry .Values.image.repository (default (printf "v%s" .Chart.AppVersion) .Values.image.tag) $digest }}
 {{- end }}
 
 {{/*

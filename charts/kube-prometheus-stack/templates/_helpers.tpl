@@ -331,3 +331,17 @@ tlsConfig:
 bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
 {{- end }}
 {{- end }}
+
+{{/*
+Prints the base image registry if defined.
+{{ include "kube-prometheus-stack.imageRegistry" ( dict "registry" .Values.example.image.registry "global" .global) }}
+*/}}
+{{- define "kube-prometheus-stack.imageRegistry" -}}
+{{- $baseRegistry := (.global).baseImageRegistry | default "" -}}
+{{- $registry := (.global).imageRegistry | default .registry -}}
+{{- if $baseRegistry -}}
+  {{- printf "%s/%s" $baseRegistry $registry -}}
+{{- else -}}
+  {{- print $registry -}}
+{{- end -}}
+{{- end -}}
